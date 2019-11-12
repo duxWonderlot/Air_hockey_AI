@@ -1,0 +1,79 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+#region description_behaviours
+//Difficulty is based on Hit rate(near distance) of Ai in the game
+//This is An Air Hockey Ai with 3 Behaviours
+#endregion
+public class Ai : MonoBehaviour
+{
+    #region singleton_instialization
+    //singeton initialization
+    // public static Ai instancel_;
+    #endregion
+    private GameObject disc_please;
+    private float maintain_distancel;
+    [SerializeField]
+    private bool Easy_, Meduim_, Hard;
+    //Made 
+    private GameObject rest_please;
+    private void Awake()
+    {
+        #region singleton_unused can be used for expanding the bahaviour example making behaviour manager(state machine/etc.....) 
+        //if (instancel_ == null)
+        //{
+        //    instancel_ = this;
+        //}
+        //else
+        //{
+        //    DontDestroyOnLoad(this.gameObject);
+        //}
+        #endregion
+    }
+    private void Start()
+    {
+        //calling objects inorder to get rid of Null points Expections
+        disc_please = GameObject.Find("PlayerRed");
+        rest_please = GameObject.Find("reset_point");
+    }
+
+    private void Update()
+    {
+        //calcualting distances between Disc and Player
+        maintain_distancel = Vector2.Distance(this.gameObject.transform.position, disc_please.transform.position);
+        if(maintain_distancel < 3.0f)
+        {
+            //Simple Logic for Easy/Medium/Hard this can be called in State Machines is Terms of Booleans
+            //this can be changed to int even instaed of Booleans
+            if (Easy_)
+            {
+                print("hit_easy");
+                this.gameObject.transform.position = Vector2.Lerp(this.gameObject.transform.position, disc_please.transform.position, 2.1f * Time.deltaTime/4);
+
+                if (maintain_distancel < 2.0f)
+                    this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+            }
+            else if (Meduim_)
+            {
+                print("hit_meduim");
+                this.gameObject.transform.position = Vector2.Lerp(this.gameObject.transform.position, disc_please.transform.position, 4.1f * Time.deltaTime/4);
+
+                if (maintain_distancel < 2.0f)
+                    this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+            }
+            else if (Hard)
+            {
+                print("hit_hard");
+                this.gameObject.transform.position = Vector2.Lerp(this.gameObject.transform.position, disc_please.transform.position, 6.1f * Time.deltaTime/4);
+
+                if (maintain_distancel < 2.0f)
+                    this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+            }
+        }
+        else
+        {   // resetting the positions, if player is out of range
+            this.gameObject.transform.position = Vector2.Lerp(this.gameObject.transform.position, rest_please.transform.position, 0.4f*Time.deltaTime);
+        }
+    }
+}
