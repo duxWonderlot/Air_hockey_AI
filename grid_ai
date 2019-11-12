@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public class grid_Ai : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject grids_points;
+    //used lists to store points 
+    [SerializeField]
+    List<GameObject> Store_points = new List<GameObject>();
+
+    #region Description_ofthegrid
+    //spawning grid for Ai movement space
+    //adding Scripts say Values for each point here
+    //Added 2DColliders and Used Triggers, which acts as Detectors for getting positions of the disc in the game worlds
+    #endregion
+    private void Start()
+    {
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+
+                //hey_store.transform.position = ;
+                this.transform.localRotation = new Quaternion(-180, 0, 0, 0);
+                var Store = Instantiate(grids_points);
+                Store.transform.position = new Vector2(this.gameObject.transform.position.x + j, this.gameObject.transform.position.y + i);
+                Store_points.Add(Store);
+                Store.AddComponent<BoxCollider2D>();
+                Store.GetComponent<BoxCollider2D>().isTrigger = true;
+                Store.AddComponent<values>();
+                Store.transform.parent = this.transform;
+                
+            }
+        }
+
+      
+    }
+ 
+}
+#region descriptions_about Scripts
+//Every_point will have this Scripts, uses Vector values to calculate disc postions and Ai positions
+#endregion
+class values : MonoBehaviour
+{
+    public int Range_values;
+    public bool is_in_Range;
+    public float distance_BT_Disc_Self;
+    public GameObject target,AI_object;
+    private void Awake()
+    {
+        target = GameObject.Find("PlayerRed");
+        AI_object = GameObject.Find("PlayerRed_AI");
+    }
+
+    public void Update()
+    {
+        distance_BT_Disc_Self = Vector2.Distance(this.gameObject.transform.position, target.gameObject.transform.position);
+
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+       AI_object.gameObject.transform.position = Vector3.Lerp(AI_object.gameObject.transform.position, other.gameObject.transform.position, 0.6f * Time.deltaTime);
+        
+    }
+}
